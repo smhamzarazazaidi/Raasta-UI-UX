@@ -1,0 +1,199 @@
+Yes — here's everything I remember about **Raasta** from our previous discussions.
+
+# 🚍 Raasta — Community-Powered Transit Network
+
+### Core Idea
+
+**Raasta** is a **community-powered public transport navigation app** for Pakistan.
+
+Unlike Google Maps, it **doesn't rely on official GPS trackers installed on buses**.
+
+Its core philosophy is:
+
+> **"We don't track the buses. We track the people."**
+
+Instead of tracking vehicles, Raasta uses passengers' phones to determine where buses are, which routes are active, travel times, and fares.
+
+---
+
+# The Problem
+
+Pakistan's public transport suffers from:
+
+* No live bus tracking
+* Unclear routes
+* Unknown fares
+* Difficult route planning
+* No reliable arrival estimates
+* Tourists and new commuters struggle
+
+---
+
+# The Solution
+
+Raasta lets the **community build the transit network together.**
+
+Every passenger who uses the app contributes anonymous transit data.
+
+As more people use Raasta:
+
+* routes become more accurate
+* fares stay updated
+* ETAs improve
+* bus locations become more reliable
+
+without requiring expensive GPS hardware.
+
+---
+
+# User Flow
+
+### 1. User enters destination
+
+Example:
+
+> FAST University → Dolmen Mall
+
+---
+
+### 2. Raasta suggests multiple options
+
+Example:
+
+* 🟢 Saver
+* 🔵 Express
+* 🟡 Comfort
+
+Each option shows:
+
+* estimated time
+* estimated fare
+* transfers
+* walking distance
+
+---
+
+### 3. User selects a route
+
+Raasta guides the passenger to
+
+* correct stop
+* boarding point
+
+---
+
+### 4. Ride Detection
+
+Once onboard,
+
+the app detects movement using:
+
+* phone GPS
+* speed
+* motion
+
+No manual tracking required.
+
+---
+
+### 5. Ride Ends
+
+When the passenger gets off,
+
+Raasta asks
+
+> "How much fare did you pay?"
+
+This updates the community database.
+
+---
+
+### 6. Crowd Updates
+
+Thousands of passengers continuously improve
+
+* fares
+* route accuracy
+* stop locations
+* travel times
+
+---
+
+# Community Model
+
+The entire system improves automatically because users contribute data while commuting.
+
+No expensive hardware.
+
+No government-installed trackers required.
+
+---
+
+# Key Features
+
+* Community-powered bus tracking
+* Smart route planning
+* Multiple route recommendations
+* Fare estimation
+* Live fare updates
+* Boarding guidance
+* Ride detection
+* ETA prediction
+* Walking directions
+* Crowd-sourced transit intelligence
+
+---
+
+# Unique Selling Point (USP)
+
+Instead of:
+
+> Tracking buses
+
+Raasta
+
+> Tracks passengers
+
+This makes the system:
+
+* cheaper
+* scalable
+* deployable in cities without smart transit infrastructure
+
+---
+
+# Pitch Line
+
+The line we finalized was:
+
+> **"The truth is… We don't track the buses. We track the people."**
+
+---
+
+# Resume Entry (Previously Made)
+
+**Raasta — Community Transit App**
+
+> Built a community-powered transit app that recommends optimal public transport routes and improves route/fare accuracy using crowdsourced commuter data. *(In Progress: Enhancing real-time tracking and prediction accuracy.)*
+
+---
+
+## What I think we can expand next
+
+I also remember we were preparing this like a startup pitch. We can further develop:
+
+* Complete system architecture
+* AI-powered ETA prediction
+* Gamification & rewards for contributors
+* Driver mode
+* Offline route support
+* Safety features
+* Revenue model
+* Government integration strategy
+* Technical architecture (React Native, backend, database, APIs)
+* Investor pitch deck
+* Figma UI/UX
+* MVP roadmap
+* Hackathon presentation
+
+I still remember the core vision very clearly: **Raasta isn't a bus-tracking app—it's a community-powered transit intelligence platform built from commuters' real-time participation.**

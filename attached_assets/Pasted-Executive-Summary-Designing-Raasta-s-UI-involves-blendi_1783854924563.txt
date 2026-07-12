@@ -1,0 +1,307 @@
+Executive Summary
+Designing Raasta’s UI involves blending modern ride-hailing conventions (clean layout, intuitive flows, card-based navigation) with Pakistani transit flair (vibrant colors, floral/folkloric motifs). We propose two visual themes: a Minimal Modern theme (white/light backgrounds, clear typography, single-tone accents) and a Cultural Pakistani variant (added patterned accents, brighter color palette inspired by bus/truck art). Every screen (onboarding, search/home, route results, live ride, etc.) is carefully detailed below with wireframes, components, interactions, and accessibility notes. We include user personas, flows, component style tables (colors, fonts, spacings), design references (screenshots from Uber/Careem/Bykea/eTransit for inspiration), and practical deliverables like an MVP page list with time estimates, Figma structuring, microcopy suggestions, and a user-testing plan. Throughout, we balance completeness with clarity for developers and designers.
+
+User Personas & Goals
+Daily Commuter (urban professional): Uses buses/trains routinely. Goals: Plan quickest route, know ETA/fare, avoid delays. Values efficiency and reliability.
+Student/Newcomer: New to city/transit system. Goals: Easy route planning, detailed guidance to stops, clear instructions. Needs help with unknown fare.
+Tech-Savvy Tourist: Needs to navigate unfamiliar city. Goals: Offline maps, simple multi-language UI, real-time transit info. Interested in rewards/guides.
+Senior/Accessibility-Limited Rider: Values simplicity. Goals: Large text, voice assistance, obvious buttons. May prefer step-by-step help.
+Bus Driver/Operator (Driver Mode): A secondary persona: tracks routes and reports issues. Goals: Quickly confirm passenger counts or delays; minimal distraction UI. (Driver mode is opt-in for bus operators.)
+Each persona’s key goals (finding routes, tracking buses, reporting fares, etc.) drives the flows below.
+
+Primary User Flows & Pages
+1. Onboarding / Welcome
+Purpose: Introduce Raasta’s value proposition, get permissions (location, notifications), and encourage first route.
+Hierarchy/Layout: Top: App logo/title, Mid: brief explanation (“We don’t track buses; we crowdsource routes”), Bottom: call-to-action buttons. Possibly a carousel or swipe pages for features (“Smart routes, live updates, rewards”).
+Wireframe: Header: Logo + Skip/Login. Body: Illustration or map snippet with 2–3 bullet points of features. Footer: “Get Started” (or “Allow Location”).
+Components: Primary buttons (“Get Started”, “Allow location”), illustrations, progress dots (if carousel).
+Microinteractions: On tapping “Allow Location”, prompt system permission. Showing a progress indicator during initial data sync. If user skips, confirm with minimal data.
+Accessibility: High-contrast text; enlarge text buttons; tap targets >=44px. Voice-over labels for icons/buttons.
+Responsive: Full-screen on mobile; on tablet, possibly side-by-side image/text.
+Data/State: Check if user is new; store “first-time-run” flag. Manage permission states (location allowed or not).
+Example: A Citymapper-style intro might suggest creating a test route from user’s location. After permission, Raasta could even show a sample destination (“E.g. FAST University → Dolmen Mall”) to let users try.
+
+2. Home / Route Search
+Purpose: Let user plan a trip: input origin/destination, see map of area. Offer options (e.g. walking-only, combination).
+Hierarchy/Layout: Header: Possibly profile icon + notifications bell. Body: A prominent search box (“Where to?” or “Enter destination”), a small map view (pins of stops), and quick-links (e.g. “Recent routes”, “Favorites”, “Nearby stops”). Footer Navigation: Main tabs – Home/Search, My Trips, Rewards, Profile.
+Wireframe:
+Header: “Hi, [Name]” (or app logo) + menu/notifications.
+Body, top: Large search card with two fields (From: current location by default; To: text input or map pick).
+Body, below: Option buttons (e.g. “Saved Home”, “Saved Work”). Or map with pins.
+Footer: Tab bar with 4–5 icons (Search, Live, Rewards, Profile).
+UI Components: Text fields with autocomplete, map thumbnail with current location, icon buttons (e.g. magnifier, location pin), card containers for quick options.
+Microinteractions:
+Tapping search fields focuses keyboard.
+Location detection icon (spinner) until lock in current loc.
+As user types, show suggestions dropdown.
+Animated map drop pin from GPS fix.
+Animations: Subtle zoom in map when location found; text field highlight.
+Accessibility: Clear placeholder text (e.g. “Where are you going?”). VoiceOver labels on search inputs. Color contrast for text fields and buttons.
+Responsive: On larger screens, show map and search side-by-side. On very small, maybe only search visible.
+Data/State: Need user’s current GPS; can allow manual override. Search history stored locally. Must handle offline: if offline, still allow typing common places or using downloaded map tile around current location.
+Embedding an example: Uber’s new “Where to?” screen places a single search box over a map. Raasta’s home similarly emphasizes the search input, with clear “From/To” fields and optional “Saved places”.
+
+3. Route Results / Trip Options
+Purpose: Present one or more route options based on “From–To”. Include transfers, time, and fare estimates.
+Hierarchy/Layout: Header: “Trip Options” or map toggle. Body: List of route cards (e.g. Saver, Express, Comfort) with summary details (estimated time, fare, number of transfers, walking). Each card is selectable. Each shows a small route icon or color bar. Footer: Possibly “Swap” or “Map View” toggles.
+Wireframe:
+Header: Map toggle button (to view route on map) or back button.
+Body: Vertical stack of cards: each card shows (Icon) Route Type, Time (min), Fare estimate, Transfers, Walk distance.
+Components: Route summary cards, each with an icon (e.g. bus silhouette), route name (e.g. “Comfort”), details. Possibly color-coded side stripe for category.
+Microinteractions:
+Tapping a card highlights it (selected state).
+Underlying map briefly animates to show highlighted route.
+Cards may “bounce” in on load.
+Accessibility: Cards use sufficient contrast; tappable area includes entire card. Text sizes for time/fare should scale.
+Responsive: On tablet, show list on left and map on right.
+Data/State: Needs computed routes (based on crowdsourced data), estimated fare (from database). If data incomplete, show “?” or allow “Report missing fare”.
+For example, the Careem app categorizes ride services under tabs (Go/Eat/Get) – Raasta’s route cards similarly categorize bus types or multi-modal options. The UI must keep these easily scannable and tappable.
+
+4. Live Ride / Navigation
+Purpose: Once a route is started, show live bus tracking (crowdsourced), progress, and guidance to the user.
+Hierarchy/Layout: Header: “On Trip” status (e.g. “Boarded Bus #14”). Back/stop button if needed. Body: Large map dominating (bus pin moving in real-time). Below or overlay: Current stop info, upcoming stop, route timeline, alerts (e.g. delay). Footer: Action buttons (e.g. “Report a problem”, “End Trip”).
+Wireframe:
+Map view: Real-time bus position, user’s location, route polyline.
+Info panel (bottom sheet or overlay): Next stop name, arrival countdown, current bus operator name. Also track meter: e.g. “PKR 0.00” (until reporting).
+Footer: Buttons for “SOS/Help” and “End Trip” (hidden until trip end).
+UI Components: Map (Google/Mapbox) with custom pins; bottom sheet cards for details; floating FABs/buttons (e.g. help).
+Microinteractions:
+The bus icon moves smoothly along the route as crowdsourced updates come in.
+Transition animations: the bottom info sheet slides up on boarding.
+If approaching stop, trigger haptic or subtle pulse animation on “Next stop” text.
+Animations: Map auto-centers on bus with slight delay; progress bar fills as bus travels.
+Accessibility: Voice-over reads “Next stop: [Name] in 3 min”. High-contrast pins.
+Responsive: On wider screens, map can split, with timeline on side.
+Data/State: Bus location from aggregated user GPS. Trip state (en route vs finished).
+Example: Uber’s map screen (While “tracking trip”) is similar – big map with ETA and driver info. Raasta’s live ride is analogous: map first, then overlay of dynamic trip stats.
+
+5. Ride Detection & End of Trip
+Purpose: Detect when the user exits the bus (via deceleration or stopping) and prompt for fare/payment.
+Hierarchy/Layout: May show an interim screen “Trip in progress…” until detection. On trip end: Dialog/card asking fare paid.
+Flow:
+Detection: Using phone sensors (GPS speed, accelerometer) to guess disembark.
+Confirmation: Pop-up “Are you off the vehicle? Tap End Trip.” (to avoid false positives).
+Fare Report Screen: After user confirms, show “How much did you pay?” with input field and preset buttons (e.g. common fare amounts), and a “Submit” button.
+UI Components: Confirmation pop-up, numeric input field, submit button.
+Microinteractions:
+If speed drops below threshold for few seconds, animate the “Trip in progress” bar, then show sliding modal.
+Haptic feedback on end trip confirm button.
+Accessibility: Ensure numeric input is labeled (e.g. “Fare input in PKR”).
+Data/State: Collect final fare; if user fails to report in time, remind later via notification.
+Because actual bus payments are cash-based, Raasta crowdsources the fare via user input. This is a critical interaction – it should be as frictionless as possible. E.g. preset fare buttons (small, normal, large) plus “Other”.
+
+6. Fare Reporting & Data Sync
+Purpose: After trip end, collect fare and any feedback to update community data.
+Layout: A form-like page. Header: “Trip Summary”. Body: Show route (start-end, distance), time, plus “Fare Paid: [ ] PKR” input. Optionally a “Rating” or feedback field. Footer: “Submit” button.
+Components: Input field for fare (number pad), swipe/rating component (thumbs up/down or 5-star), checkboxes for issues (crowding, late), Submit.
+Microinteractions: Input field auto-focuses for number pad. Tapping “Submit” triggers a success toast or animation (“Thanks!”).
+Accessibility: Label fields (“Enter fare in rupees”). Ensure submit button is clearly described.
+Data/State: Updates central database (sync if offline). If offline, queue for upload when online.
+7. Stop/Route Map View
+Purpose: Let user inspect specific bus stops or entire route on map. Useful for planning walking transfers or checking nearby POIs.
+Layout: Full-screen map with route overlay. Pins: All stops (with names) or interchanges. Footer/Panel: If a stop pin tapped, show a small card with stop name and arrivals of next buses.
+Components: Interactive map, pin icons, info card overlays.
+Microinteractions: Tapping a pin pops up info card; map pans/zooms smoothly.
+Accessibility: Stop names should be in readable text next to pins, or in the info card.
+Data/State: Pull nearest stops from transit database. No navigation; just view.
+8. Profile & Account
+Purpose: Manage user preferences (home/work addresses, payment methods, language, ride history).
+Layout: Header: “My Account”. Body: Sections – Profile (photo, name), Saved Places, Payment, App Settings (language, units), About. Footer: “Logout”.
+Components: Form fields (address entries), toggle switches (notifications on/off, offline maps toggle), buttons.
+Accessibility: Large toggle switches, clear labels (“Enable offline map caching”).
+Data/State: User data (profile pic), list of saved locations, payment card tokens if integrated (for future wallets).
+9. Settings & Help/Safety
+Purpose: Adjust app-wide settings (notifications, offline maps, accessibility options), and provide help features (safety info, contact support).
+Layout:
+Settings: Similar to profile sections (labels + toggles).
+Help/Safety: Cards or list items for “Share Live Location” (safety feature), “Emergency Contacts”, FAQs, “Contact Support”.
+Components: List items, toggles, cards, modals.
+Microinteractions: Toggling location sharing shows confirmation; emergency button triggers large red confirmation.
+Accessibility: Safety features should be prominent and reachable (e.g. pinned to bottom or main menu).
+10. Payments (Future Integration)
+Purpose: Allow pre-loading a wallet or cashless payments. Not in core MVP but designing space for it.
+Layout: If integrated, a sub-page “Wallet” with balance and top-up. Payment methods list (Easypaisa, cards).
+Data/State: Initially empty until credits added.
+11. Gamification / Rewards
+Purpose: Incentivize usage via points/badges (e.g. “You’ve taken 5 rides, earn badge”). Not MVP-critical but planned.
+Layout: A “Rewards” tab showing user’s points, a progress bar to next reward (free fare, gift card). Leaderboard among friends/commuters.
+Components: Progress bars, badge icons, cards for challenges.
+Microinteractions: When a ride is completed, show confetti + “+10 points” toast. Earning a badge triggers an animated modal.
+Accessibility: Use non-confusing imagery; provide text alternatives for badges.
+12. Admin / Analytics Views (Backoffice)
+Purpose: Internal dashboard for city officials or admin to see crowd data (popular routes, user stats, delays).
+Layout: Web-based UI (desktop): charts of ridership by route, map heatmap of user density, flagged issues list.
+Components: Data tables, maps, graphs.
+Note: Only for internal use; not part of mobile UX but architecturally noted.
+Component Library & Style Tokens
+Color Palette
+Below are suggested color tokens. Minimal Theme uses subtle, modern shades; Cultural Theme integrates brighter hues from Pakistani “truck art” (floral and wildlife motifs).
+
+Token	Minimal Theme (Hex)	Cultural Theme (Hex)
+Primary	#2C7BE5 (Bright Blue)	#E93F48 (Vibrant Red)
+Secondary	#10A879 (Teal)	#F7A029 (Orange)
+Accent	#FFC107 (Amber)	#0F9D58 (Emerald Green)
+Background (light)	#FFFFFF (White)	#FCFCFC (Off-white)
+Background (dark)	#2F3E46 (Charcoal)	#333333 (Dark Gray)
+Text Primary	#212529 (Dark Gray)	#212529 (Dark Gray)
+Text Secondary	#6C757D (Gray)	#6C757D (Gray)
+Error / Warning	#E55353 (Soft Red)	#E55353 (Soft Red)
+
+Notes: The Minimal theme is mostly monochromatic + one accent (blue or teal). The Cultural theme adds an extra accent (orange/green) reflecting truck-art palettes. Use patterns (see below) over muted backgrounds.
+
+Typography
+Choose a clean, legible typeface (e.g. Roboto or [Inter]). A suggested scale:
+
+Role	Font (Weight)	Size	Leading/Line-height
+Display (H1)	64px (Bold)	64 pt	1.25× (80 pt)
+Heading (H2)	32px (Semi-Bold)	32 pt	1.3× (42 pt)
+Subhead (H3)	24px (Medium)	24 pt	1.3× (31 pt)
+Body (P)	16px (Regular)	16 pt	1.5× (24 pt)
+Small (Caption)	14px (Regular)	14 pt	1.4× (20 pt)
+
+Text colors use the above tokens. Headings in primary text color (dark gray). Links/interactive text can use Primary color. Ensure 4.5:1 contrast for normal text.
+
+Iconography
+Use a consistent line icon set (e.g. Material Icons or custom icons). For cultural flair, add a simple filigree patterned fill behind some icons (e.g. a small floral watermark behind badge icons). But keep icons mostly flat for clarity.
+Common icons: search, location pin, bus, profile, settings, alert, ticket.
+Provide both filled and outline versions for different states (active/inactive) following names like Icon/Bus/Filled and Icon/Bus/Outline.
+Spacing & Layout
+Use an 8px square base grid. Common spacing: 8px, 16px, 24px, 32px. Buttons often 16px vertical & 24px horizontal padding. Apply increased spacing on larger screens.
+
+Elevation / Shadows
+Minimal shadows: e.g. cards and modals have subtle shadow (box-shadow: 0 2px 6px rgba(0,0,0,0.1)).
+Dropdowns or buttons can have slight elevation on press (darken background, or raise shadow).
+Component Styles
+Buttons
+Primary Button: Filled with primary color (blue or red) and white text. E.g. “Get Started”, “Submit”. Rectangular with 8px corner radius. On press: slightly darker shade.
+Secondary Button: Outlined (1px border primary color, transparent background) or filled with secondary color for alternates.
+Danger Button: Filled with Error color (#E55353) for “End Trip” or “Cancel Trip.”
+States: Normal, pressed (darker bg), disabled (gray background #6C757D, low opacity text).
+Input Fields
+Text Field: White background, 1px border (light gray). On focus, border turns primary color. Placeholder text in light gray. Numeric fields center text if only numbers.
+Toggle/Switch: Standard switch UI (Material/Apple style). On/off use primary color.
+Dropdown/Picker: Tapping opens a modal or bottom sheet; the field shows selected value with a down-arrow.
+Design Themes & Motifs
+Minimal Modern: A clean interface with ample white space. Use solid color blocks to delineate sections. Illustrations or icons are minimal.
+Cultural Pakistani: Incorporate subtle patterns inspired by phool-patti/truck art. For example, a faint floral border along the top of a card, or a light paisley pattern behind the header bar. Use the accent colors boldly for highlights (buttons, progress bars). The cultural theme should feel warm and lively but not cluttered – patterns should be used sparingly (e.g. as section dividers or backgrounds for hero areas) so as not to reduce legibility. For instance, the header bar could have an 8px band of patterned motif at its bottom edge.
+Visual Style Examples
+Below are UI inspiration screenshots from similar apps (InDrive, Uber, Careem, etc.). These illustrate layout and aesthetic cues.
+
+Ride-hailing home screen: Uber’s new home screen prominently features a “Where to?” search box over a map. Raasta’s Home search likewise centers on a single large input field and a map.
+Multi-service dashboard: Careem’s all-in-one home shows categorized tiles (rides, food, grocery). Raasta’s Minimal theme uses a similar tile grid (Bus Routes, Favorite Places, Tickets) on Home, while the Cultural theme could use patterned backgrounds on those tiles.
+Route planning map: A transit planning app’s map view (e.g. eTransit) displays user’s location and possible routes. Raasta will show a live map of the selected route with animated bus icons.
+Search & fare offer: InDrive’s “set your price” UI (left, [5]) suggests ideas like clear fare input; Raasta’s fare-report input (after trip) similarly emphasizes numeric input and quick-submit UI.
+Each image informs our UI composition, but Raasta’s design tailors the layout for Pakistan’s transit context (e.g. large fonts for sunlight visibility).
+
+Design Choices Comparison
+Design Aspect	Minimal Modern	Cultural Pakistani
+Color Use	Mostly white/light BG, one accent color (blue/teal) for highlights.	White/off-white BG with multi-colored accents (bright red, orange, green). Accent colors appear on buttons, headers, and as pattern fills.
+Typography	Neutral, sans-serif.	Same font but headings/text may use accent color or pattern on underline.
+Patterns/Motifs	None or very minimal (flat icons).	Discreet floral/eye motifs in background overlays or borders (e.g. a faded floral trim on header bars). Not on main text.
+Icons	Simple glyphs (filled or outline).	May include small decorative color splashes (e.g. painted icon backgrounds).
+Button Style	Solid primary or outlined. Rounded 8px.	Possibly fully rounded pill shape with gradient inspired by truck art colors.
+Map Theme	Standard muted map.	Slightly brighter map pins (turquoise, yellow) reflecting bus-art palette, if platform allows.
+Animations	Subtle (fade/slide).	Can add playful touches (e.g. bus icon with “bouncing” as it moves).
+
+Component Specifications
+Component	Size / Spacing	Minimal Theme Style	Cultural Theme Style
+Primary Button	16px vertical pad, 24px horizontal pad; 8px radius.	Background: Primary color (#2C7BE5); Text: white.	Background: Accent palette color (e.g. #E93F48); Text: white. May have patterned inset on hover.
+Card	16px padding, 8px radius, shadow.	Background: white, shadow light gray.	Background: white, shadow; top border or header with thin pattern stripe.
+Text Field	Height 48px, 8px corner.	Border: 1px #CCCCCC.	Same, but on focus border could be accent color. Possibly a faint patterned background highlight when active.
+Icon	24x24 or 32x32 pt icons.	Stroke/filled: Primary color on active, gray on inactive.	Primary color on active; Inactive icons could be tinted an accent color.
+Spacing Unit	8px (base); multiples (16,24,32).	—	—
+
+Component Library Tokens
+Design Tokens: Define all above as tokens (e.g. color-primary, font-heading, spacing-xs, etc.) in the Figma Styles/Design System page.
+Naming Conventions: Use slash-separated naming, e.g. Button/Primary/Default, Button/Primary/Hover, Text/Heading/H2, Color/Primary.
+Elevations: Tokens like elevation-1 for small shadow, elevation-2 for cards.
+Grid: Set up an 8pt grid in Figma for consistency.
+MVP Page List with Estimates
+Feature / Screen	Key Deliverables	Estimate
+Onboarding & Permissions	Wireframes (2 slides), UI mocks for welcome & permission pop-ups	2–3 days
+Home / Search UI	Wireframe + mockup (search bar, map view, quick-options)	3 days
+Route Results	Mockup of route cards list + map toggle; fare display area	2 days
+Live Ride Screen	Mockup of real-time map view with trip info overlay	3 days
+End-of-Trip / Fare Report	Wireframe & mockup of detection prompt + fare entry screen	2 days
+Profile & Settings	UI for profile (saved places, prefs) and settings/help pages	3 days
+Notifications	Sample notification designs (arrival alert, fare report reminder)	1 day
+Gamification (Prototype)	Simple mockups of rewards screen (points, badges)	2 days
+Driver Mode (Prototype)	Screen designs (route alerts, ride acceptance) [if implemented]	2 days
+Offline Mode Config	UI for download maps, offline status indicator	1 day
+
+Notes: This list prioritizes core user journeys. Each day estimate covers low-fi wireframes + hi-fi visual mockups. Total ~16–18 days design work.
+
+Figma File Structure & Export Spec
+Pages: Organize Figma into pages: “00 Cover”, “01 Branding & Tokens”, “02 Wireframes”, “03 UI Screens”, “04 Components & Icons”, “05 Prototypes”.
+Layers/Components: Use clear naming (e.g. Button/Primary/Default). Group related components (e.g. all buttons under a “Buttons” frame). Document each component’s intended use in the description field.
+Versioning: Track versions by branches (v1, v2).
+Export:
+Export icons and illustrations as SVG (for scalability).
+Screens and assets: provide PNG @2x/3x for mobile, and vector PDF for any adaptives.
+Follow standard mobile sizes (e.g. iPhone 14 @3x: 1170×2532, Android xxhdpi).
+Naming: Use kebab-case for exported files (e.g. screen-homepage@3x.png).
+Microcopy (Example Text)
+Onboarding:
+
+Welcome Screen: “Welcome to Raasta – Community-powered transit!”
+“We track your ride, not the bus” (tagline)
+Buttons: “Get Started”, “Later”
+Home/Search:
+
+Search placeholder: “Enter destination (e.g. University)”.
+Quick tips: “Tap a pin to choose starting point”.
+Route Results:
+
+Route card labels: “Saver”, “Express”, “Comfort” (with icons).
+“Walk 200m, then board Bus 15 toward Dolmen Mall.”
+Live Ride:
+
+Status bar: “You’re on Bus 15 – arriving in 4 min.”
+Tooltip: “Share your live location with a friend.”
+Trip End:
+
+Prompt: “Tap ‘Yes’ to confirm you’ve exited the bus.”
+Fare screen title: “Report Your Fare”.
+Placeholder: “PKR 50” in fare input.
+Submit button: “Submit Fare”.
+Help/Safety:
+
+“Need help? Share ride” button (for SOS).
+FAQ placeholder text like “How does Raasta work?”
+Gamification:
+
+Badge earned: “Congratulations! You’ve earned the Rider badge 🎉”
+All microcopy should be concise, friendly, and preferably in clear English (or Urdu/English mix if multilingual support is added).
+
+Accessibility Considerations
+Contrast & Font Size: Meet WCAG AA contrast for all text. Default body text ≥16pt and buttons ≥18pt. Use bolding rather than tiny text.
+Color Blindness: Don’t rely on color alone; for example, active route vs inactive route in color-coded cards should also use labels or icons.
+Touch Targets: Ensure tappable elements are ≥44×44px (about 10mm).
+VoiceOver: Provide alt text for important images (e.g. map snapshots). Label all buttons and form fields.
+Reduced Motion: Allow disabling animations (e.g. map panning) for those with vestibular issues.
+User Testing Plan
+Tasks:
+
+Plan a Route: “Find a way from [landmark] to [landmark] using public transit.” Observe if user finds search, selects route, and starts navigation.
+Track Live Ride: Start a route, then simulate boarding. Test if user notices the live bus map and knows how to end trip.
+Report Fare: After ending trip, check if user can correctly input fare and submit.
+Access Help: User tries to share location or view FAQ.
+Offline Map: Simulate offline by toggling network; test if offline maps are accessible or a prompt appears.
+Success Metrics:
+
+Task Completion Rate (>90% success).
+Time on Task (e.g. <30 seconds to plan route).
+Error Rate (number of mis-taps or backtracks).
+SUS (System Usability Scale) Score ≥ 80.
+Sample SUS Questions (Likert 1–5):
+
+“I found the Raasta app unnecessarily complex.” (Disagree = good)
+“I felt confident using Raasta without technical support.” (Agree = good)
+“I thought most people could learn to use Raasta quickly.” (Agree = good)
+Gather qualitative feedback: “What did you like/dislike? Any confusing parts?” Iterate design based on this feedback.
+
+Citations
+UX guidelines from AltexSoft: City home screen with map and test route, and offline map recommendations.
+Pakistani truck-art motifs: common imagery is protective eyes, birds, flowers, wildlife. Truck art uses vivid colors, intricate patterns, hand-painted plants/animals and calligraphy.
+Transit UI principles: focus on legibility in daylight, large tappable targets, minimal necessary notifications.
+This comprehensive design brief should guide Raasta’s UI/UX development from initial mockups through a tested MVP, ensuring a minimal yet culturally rich interface for Pakistan’s riders.

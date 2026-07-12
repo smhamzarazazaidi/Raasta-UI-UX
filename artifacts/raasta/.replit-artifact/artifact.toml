@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "Raasta"
+version = "1.0.0"
+id = "artifacts/raasta"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24622
+
+[services.development]
+run = "pnpm --filter @workspace/raasta run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/raasta", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/raasta/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24622"
+BASE_PATH = "/"
