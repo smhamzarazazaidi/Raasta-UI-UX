@@ -6,6 +6,7 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AppProvider, useApp } from '@/context/AppContext';
+import { AlertProvider } from '@/context/AlertContext';
 import { useColors } from '@/hooks/useColors';
 import {
   Inter_400Regular,
@@ -69,7 +70,9 @@ export default function RootLayout() {
           <GestureHandlerRootView>
             <KeyboardProvider>
               <AppProvider>
-                <RootLayoutNav />
+                <AlertProvider>
+                  <RootLayoutNav />
+                </AlertProvider>
               </AppProvider>
             </KeyboardProvider>
           </GestureHandlerRootView>

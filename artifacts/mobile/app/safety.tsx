@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Linking, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Linking, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -7,12 +7,14 @@ import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
 import { useApp } from '@/context/AppContext';
+import { useAlert } from '@/context/AlertContext';
 import { Button, SectionLabel } from '@/components/UI';
 import { EditableFieldModal } from '@/components/EditableFieldModal';
 
 export default function SafetyScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
+  const alert = useAlert();
   const { settings, toggleSetting, emergencyContact, setEmergencyContact } = useApp();
   const [editingContact, setEditingContact] = useState(false);
   const [sending, setSending] = useState(false);
@@ -22,7 +24,7 @@ export default function SafetyScreen() {
       setEditingContact(true);
       return;
     }
-    Alert.alert('Alert emergency contact?', 'This opens a text message with your live location.', [
+    alert('Alert emergency contact?', 'This opens a text message with your live location.', [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Send location',
@@ -32,7 +34,7 @@ export default function SafetyScreen() {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
           try {
             if (Platform.OS === 'web') {
-              Alert.alert('Not supported', 'Sending SMS is not available in the web preview. Try this on your phone via Expo Go.');
+              alert('Not supported', 'Sending SMS is not available in the web preview. Try this on your phone via Expo Go.');
               return;
             }
             const { status } = await Location.requestForegroundPermissionsAsync();
@@ -45,7 +47,7 @@ export default function SafetyScreen() {
             const url = `sms:${emergencyContact}${Platform.OS === 'ios' ? '&' : '?'}body=${body}`;
             await Linking.openURL(url);
           } catch {
-            Alert.alert('Could not open messages', 'Please try again or call your contact directly.');
+            alert('Could not open messages', 'Please try again or call your contact directly.');
           } finally {
             setSending(false);
           }

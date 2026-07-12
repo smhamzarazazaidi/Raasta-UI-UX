@@ -1,10 +1,11 @@
 import React from 'react';
-import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
 import colors from '@/constants/colors';
 import { useApp } from '@/context/AppContext';
+import { useAlert } from '@/context/AlertContext';
 import { EmptyState } from '@/components/UI';
 
 function formatDate(ts: number): string {
@@ -15,12 +16,13 @@ function formatDate(ts: number): string {
 export default function TripsScreen() {
   const theme = useColors();
   const insets = useSafeAreaInsets();
+  const alert = useAlert();
   const { tripHistory } = useApp();
 
   const showDetail = (id: string) => {
     const trip = tripHistory.find((t) => t.id === id);
     if (!trip) return;
-    Alert.alert(
+    alert(
       `${trip.from} → ${trip.to}`,
       `${trip.routeType} · Bus ${trip.busNumber}\n${trip.distanceKm} km · PKR ${trip.fare}\n+${trip.pointsEarned} points earned\n${formatDate(trip.completedAt)}`,
     );

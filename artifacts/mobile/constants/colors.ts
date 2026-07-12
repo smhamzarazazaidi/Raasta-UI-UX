@@ -1,56 +1,58 @@
 /**
- * Semantic design tokens for Raasta.
+ * Semantic design tokens for Raasta — "Cultural Pakistani" theme.
  *
- * Palette draws from Pakistani transit culture — warm sand backgrounds,
- * a deep "road" emerald as the primary brand color, and marigold / vermillion
- * accents inspired by truck-art livery — kept restrained so the UI stays
- * legible in daylight rather than decorative.
+ * Palette is pulled straight from truck-art livery: vermillion red as the
+ * hero color, marigold-orange and emerald as its supporting accents, on a
+ * warm off-white ground so painted colors pop the way they do on a real
+ * Lahore bus. Decorative motifs (see TruckArtBand) stay confined to
+ * header/hero edges per the brief — body text and cards stay plain and
+ * legible in daylight.
  */
 
 const colors = {
   light: {
     // Legacy aliases (kept for backward compatibility)
-    text: '#201D18',
-    tint: '#0E8F72',
+    text: '#20140A',
+    tint: '#E93F48',
 
     // Core surfaces
-    background: '#FBF7F1',
-    foreground: '#201D18',
+    background: '#FCF8F1',
+    foreground: '#20140A',
 
     // Cards / elevated surfaces
     card: '#FFFFFF',
-    cardForeground: '#201D18',
+    cardForeground: '#20140A',
 
-    // Primary action color — "the road" emerald
-    primary: '#0E8F72',
+    // Primary action color — truck-art vermillion red
+    primary: '#E93F48',
     primaryForeground: '#FFFFFF',
 
-    // Secondary / less-emphasis interactive surfaces — soft marigold tint
-    secondary: '#FCEBD2',
-    secondaryForeground: '#7A4A00',
+    // Secondary / less-emphasis interactive surfaces — marigold tint
+    secondary: '#FDECC8',
+    secondaryForeground: '#8A4B00',
 
     // Muted / subdued elements (dividers, timestamps, placeholders)
-    muted: '#F0EAE0',
-    mutedForeground: '#7A7266',
+    muted: '#F2E9DA',
+    mutedForeground: '#7C6F5E',
 
-    // Accent highlights (badges, selected items, focus rings) — marigold
-    accent: '#F2A22C',
+    // Accent highlights (badges, selected items, focus rings) — marigold orange
+    accent: '#F7A029',
     accentForeground: '#3A2400',
 
-    // Destructive / urgent actions (end trip, SOS) — vermillion
-    destructive: '#DE4B3F',
+    // Destructive / urgent actions (end trip, SOS) — deep crimson
+    destructive: '#C62828',
     destructiveForeground: '#FFFFFF',
 
     // Borders and input outlines
-    border: '#E8E0D2',
-    input: '#E8E0D2',
+    border: '#EFE1C8',
+    input: '#EFE1C8',
   },
 
   // Route-type accent colors, echoing the brief's Saver/Express/Comfort cues
   route: {
-    saver: '#0E8F72',
+    saver: '#0F9D58',
     express: '#2E6FE0',
-    comfort: '#F2A22C',
+    comfort: '#F7A029',
   },
 
   // Border radius (in px) — soft, warm, pill-leaning

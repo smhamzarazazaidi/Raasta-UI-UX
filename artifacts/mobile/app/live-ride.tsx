@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -7,6 +7,7 @@ import { router } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
 import colors from '@/constants/colors';
 import { useApp } from '@/context/AppContext';
+import { useAlert } from '@/context/AlertContext';
 import { RouteVisual, routeTypeIcon } from '@/components/RouteVisual';
 import { RouteMap } from '@/components/RouteMap';
 import { Button } from '@/components/UI';
@@ -22,6 +23,7 @@ function demoDurationMs(etaMin: number): number {
 export default function LiveRideScreen() {
   const theme = useColors();
   const insets = useSafeAreaInsets();
+  const alert = useAlert();
   const { activeTrip, cancelTrip } = useApp();
   const [phase, setPhase] = useState<Phase>('boarding');
   const [progress, setProgress] = useState(0);
@@ -89,7 +91,7 @@ export default function LiveRideScreen() {
   };
 
   const handleEndPress = () => {
-    Alert.alert('End this trip?', 'Confirm once you have exited the bus.', [
+    alert('End this trip?', 'Confirm once you have exited the bus.', [
       { text: 'Not yet', style: 'cancel' },
       { text: "I've exited", style: 'default', onPress: confirmEnd },
     ]);
@@ -99,9 +101,9 @@ export default function LiveRideScreen() {
     const logIssue = (issue: string) => {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       setReportedIssues((prev) => (prev.includes(issue) ? prev : [...prev, issue]));
-      Alert.alert('Thanks for reporting', 'This helps keep the route accurate for other riders.');
+      alert('Thanks for reporting', 'This helps keep the route accurate for other riders.');
     };
-    Alert.alert('Report a problem', 'What happened on this trip?', [
+    alert('Report a problem', 'What happened on this trip?', [
       { text: 'Bus is late', onPress: () => logIssue('Late') },
       { text: 'Overcrowded', onPress: () => logIssue('Crowded') },
       { text: 'Wrong route', onPress: () => logIssue('Wrong route') },
@@ -110,7 +112,7 @@ export default function LiveRideScreen() {
   };
 
   const handleCancel = () => {
-    Alert.alert('Cancel trip?', 'This trip will not be saved to your history.', [
+    alert('Cancel trip?', 'This trip will not be saved to your history.', [
       { text: 'Keep riding', style: 'cancel' },
       {
         text: 'Cancel trip',

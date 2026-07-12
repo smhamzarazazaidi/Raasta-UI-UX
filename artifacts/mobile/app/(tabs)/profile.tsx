@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Alert, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
 import { useApp } from '@/context/AppContext';
+import { useAlert } from '@/context/AlertContext';
 import { SectionLabel } from '@/components/UI';
 import { EditableFieldModal } from '@/components/EditableFieldModal';
 
@@ -13,6 +14,7 @@ type EditingField = 'home' | 'work' | null;
 export default function ProfileScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
+  const alert = useAlert();
   const { savedPlaces, setSavedPlace, settings, toggleSetting, points, tripHistory } = useApp();
   const [editing, setEditing] = useState<EditingField>(null);
 
@@ -90,7 +92,7 @@ export default function ProfileScreen() {
           <Pressable
             style={styles.row}
             onPress={() =>
-              Alert.alert(
+              alert(
                 'How Raasta works',
                 "Raasta has no GPS trackers on buses. Riders who open the app during a trip help build the map — routes, fares and arrival times all come from real trips like yours.",
               )
@@ -103,7 +105,7 @@ export default function ProfileScreen() {
           <View style={[styles.divider, { backgroundColor: colors.border }]} />
           <Pressable
             style={styles.row}
-            onPress={() => Alert.alert('Contact support', 'support@raasta.app')}
+            onPress={() => alert('Contact support', 'support@raasta.app')}
           >
             <Ionicons name="mail-outline" size={18} color={colors.mutedForeground} />
             <Text style={[styles.rowLabel, styles.flex, { color: colors.foreground }]}>Contact support</Text>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Alert,
   Platform,
   Pressable,
   ScrollView,
@@ -15,6 +14,7 @@ import * as Location from 'expo-location';
 import { Redirect, router } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
 import { useApp } from '@/context/AppContext';
+import { useAlert } from '@/context/AlertContext';
 import { Button, Chip, SectionLabel } from '@/components/UI';
 import { EditableFieldModal } from '@/components/EditableFieldModal';
 import { MiniMap } from '@/components/MiniMap';
@@ -24,6 +24,7 @@ const LAHORE_CENTER = { latitude: 31.5204, longitude: 74.3587 };
 export default function HomeScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
+  const alert = useAlert();
   const {
     isLoading,
     onboarded,
@@ -107,7 +108,7 @@ export default function HomeScreen() {
             <Text style={[styles.wordmark, { color: colors.foreground }]}>Raasta</Text>
           </View>
           <Pressable
-            onPress={() => Alert.alert('No new alerts', 'Route and fare updates will appear here.')}
+            onPress={() => alert('No new alerts', 'Route and fare updates will appear here.')}
             style={[styles.bellButton, { backgroundColor: colors.secondary }]}
           >
             <Ionicons name="notifications-outline" size={19} color={colors.secondaryForeground} />
