@@ -16,10 +16,10 @@ import { Redirect, router } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
 import { useApp } from '@/context/AppContext';
 import { Button, Chip, SectionLabel } from '@/components/UI';
-import { RouteVisual } from '@/components/RouteVisual';
 import { EditableFieldModal } from '@/components/EditableFieldModal';
+import { MiniMap } from '@/components/MiniMap';
 
-const TEASER_STOPS = ['You', 'Model Town Link', 'Mall Road', 'Destination'];
+const LAHORE_CENTER = { latitude: 31.5204, longitude: 74.3587 };
 
 export default function HomeScreen() {
   const colors = useColors();
@@ -36,7 +36,7 @@ export default function HomeScreen() {
   const [from, setFrom] = useState('Your location');
   const [to, setTo] = useState('');
   const [locating, setLocating] = useState(true);
-  const [teaserProgress, setTeaserProgress] = useState(0.25);
+  const [userCoords, setUserCoords] = useState<{ latitude: number; longitude: number } | null>(null);
   const [editingPlace, setEditingPlace] = useState<'home' | 'work' | null>(null);
 
   useEffect(() => {
@@ -52,6 +52,10 @@ export default function HomeScreen() {
           return;
         }
         const position = await Location.getCurrentPositionAsync({});
+        setUserCoords({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
         const [place] = await Location.reverseGeocodeAsync({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -66,13 +70,6 @@ export default function HomeScreen() {
         setLocating(false);
       }
     })();
-  }, []);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setTeaserProgress((p) => (p >= 1 ? 0 : p + 0.08));
-    }, 900);
-    return () => clearInterval(id);
   }, []);
 
   if (!isLoading && !onboarded) {
@@ -180,14 +177,18 @@ export default function HomeScreen() {
         ) : null}
 
         <View style={styles.section}>
-          <SectionLabel>Powered by riders like you</SectionLabel>
-          <View style={[styles.teaserCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <RouteVisual stops={TEASER_STOPS} progress={teaserProgress} accentColor={colors.primary} compact />
-            <Text style={[styles.teaserText, { color: colors.mutedForeground }]}>
-              Every trip reported on Raasta makes routes, fares and arrival times more accurate for the
-              next rider.
-            </Text>
+          <SectionLabel>Nearby</SectionLabel>
+          <View style={[styles.mapCard, { borderColor: colors.border }]}>
+            <MiniMap
+              center={userCoords ?? LAHORE_CENTER}
+              markerColor={colors.primary}
+              showMarker={!!userCoords}
+            />
           </View>
+          <Text style={[styles.teaserText, { color: colors.mutedForeground }]}>
+            Every trip reported on Raasta makes routes, fares and arrival times more accurate for the
+            next rider.
+          </Text>
         </View>
       </ScrollView>
 
@@ -227,6 +228,6 @@ const styles = StyleSheet.create({
   card: { borderRadius: 18, borderWidth: 1, overflow: 'hidden' },
   recentRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 13, paddingHorizontal: 16 },
   recentText: { flex: 1, fontSize: 14, fontFamily: 'Inter_500Medium' },
-  teaserCard: { borderRadius: 20, borderWidth: 1, padding: 18, gap: 14 },
-  teaserText: { fontSize: 12.5, fontFamily: 'Inter_400Regular', lineHeight: 18 },
+  mapCard: { height: 160, borderRadius: 20, borderWidth: 1, overflow: 'hidden' },
+  teaserText: { fontSize: 12.5, fontFamily: 'Inter_400Regular', lineHeight: 18, marginTop: 10 },
 });

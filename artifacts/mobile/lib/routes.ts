@@ -9,6 +9,11 @@
 
 export type RouteType = 'saver' | 'express' | 'comfort';
 
+export interface LatLng {
+  latitude: number;
+  longitude: number;
+}
+
 export interface RouteOption {
   id: string;
   type: RouteType;
@@ -21,25 +26,47 @@ export interface RouteOption {
   walkMeters: number;
   distanceKm: number;
   stops: string[];
+  path: LatLng[];
 }
 
-const STOP_POOL = [
-  'Liberty Chowk',
-  'Kalma Chowk',
-  'Ferozepur Road',
-  'Model Town Link',
-  'Ichhra Bazaar',
-  'Mall Road',
-  'Faisal Town',
-  'Gulberg Boulevard',
-  'Township Chowk',
-  'Wahdat Road',
-  'Garden Town',
-  'Barkat Market',
-  'Chungi Amar Sidhu',
-  'Thokar Niaz Baig',
-  'Shadman Chowk',
-];
+// Approximate real-world coordinates for named Lahore landmarks, used so the
+// generated route can be drawn on an actual map rather than an abstract list.
+const STOP_COORDS: Record<string, LatLng> = {
+  'Liberty Chowk': { latitude: 31.5099, longitude: 74.3436 },
+  'Kalma Chowk': { latitude: 31.5039, longitude: 74.3406 },
+  'Ferozepur Road': { latitude: 31.4923, longitude: 74.3324 },
+  'Model Town Link': { latitude: 31.4847, longitude: 74.3277 },
+  'Ichhra Bazaar': { latitude: 31.5335, longitude: 74.3271 },
+  'Mall Road': { latitude: 31.5599, longitude: 74.3294 },
+  'Faisal Town': { latitude: 31.4820, longitude: 74.3121 },
+  'Gulberg Boulevard': { latitude: 31.5147, longitude: 74.3479 },
+  'Township Chowk': { latitude: 31.4667, longitude: 74.2892 },
+  'Wahdat Road': { latitude: 31.5064, longitude: 74.3122 },
+  'Garden Town': { latitude: 31.4991, longitude: 74.3221 },
+  'Barkat Market': { latitude: 31.5089, longitude: 74.3300 },
+  'Chungi Amar Sidhu': { latitude: 31.4442, longitude: 74.2664 },
+  'Thokar Niaz Baig': { latitude: 31.4383, longitude: 74.2570 },
+  'Shadman Chowk': { latitude: 31.5453, longitude: 74.3225 },
+};
+
+const STOP_POOL = Object.keys(STOP_COORDS);
+
+const LAHORE_CENTER: LatLng = { latitude: 31.5204, longitude: 74.3587 };
+
+// Deterministically place an unresolved ("Near X") endpoint a short distance
+// from Lahore's center, seeded so the same text always lands in the same spot.
+function jitterCoord(seed: number): LatLng {
+  const angle = (seed % 360) * (Math.PI / 180);
+  const radius = 0.02 + ((seed % 17) / 17) * 0.05;
+  return {
+    latitude: LAHORE_CENTER.latitude + Math.sin(angle) * radius,
+    longitude: LAHORE_CENTER.longitude + Math.cos(angle) * radius,
+  };
+}
+
+function pathFromStops(stops: string[], seed: number): LatLng[] {
+  return stops.map((stop, index) => STOP_COORDS[stop] ?? jitterCoord(seed + index * 41));
+}
 
 function hashString(input: string): number {
   let hash = 0;
@@ -74,6 +101,10 @@ export function generateRouteOptions(from: string, to: string): RouteOption[] {
   const fromLabel = from.trim() || 'Your location';
   const toLabel = to.trim() || 'Destination';
 
+  const stopsSaver = [`Near ${fromLabel}`, ...middleStopsSaver, `Near ${toLabel}`];
+  const stopsExpress = [`Near ${fromLabel}`, ...middleStopsExpress, `Near ${toLabel}`];
+  const stopsComfort = [`Near ${fromLabel}`, ...middleStopsComfort, `Near ${toLabel}`];
+
   const saver: RouteOption = {
     id: 'saver',
     type: 'saver',
@@ -85,7 +116,8 @@ export function generateRouteOptions(from: string, to: string): RouteOption[] {
     transfers: 1 + (seed % 2),
     walkMeters: 250 + (seed % 200),
     distanceKm,
-    stops: [`Near ${fromLabel}`, ...middleStopsSaver, `Near ${toLabel}`],
+    stops: stopsSaver,
+    path: pathFromStops(stopsSaver, seed),
   };
 
   const express: RouteOption = {
@@ -99,7 +131,8 @@ export function generateRouteOptions(from: string, to: string): RouteOption[] {
     transfers: seed % 2,
     walkMeters: 150 + (seed % 120),
     distanceKm,
-    stops: [`Near ${fromLabel}`, ...middleStopsExpress, `Near ${toLabel}`],
+    stops: stopsExpress,
+    path: pathFromStops(stopsExpress, seed + 3),
   };
 
   const comfort: RouteOption = {
@@ -113,7 +146,8 @@ export function generateRouteOptions(from: string, to: string): RouteOption[] {
     transfers: 0,
     walkMeters: 80 + (seed % 80),
     distanceKm,
-    stops: [`Near ${fromLabel}`, ...middleStopsComfort, `Near ${toLabel}`],
+    stops: stopsComfort,
+    path: pathFromStops(stopsComfort, seed + 9),
   };
 
   return [saver, express, comfort];

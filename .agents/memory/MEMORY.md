@@ -1,0 +1,1 @@
+- [react-native-maps on web](react-native-maps-web.md) — must be platform-split (.native.tsx + .tsx fallback), never imported directly in shared/route files, or web bundling crashes the whole app.

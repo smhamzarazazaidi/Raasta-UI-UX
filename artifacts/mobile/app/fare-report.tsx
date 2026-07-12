@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Platform,
@@ -18,7 +18,7 @@ import { useApp } from '@/context/AppContext';
 import { Button, Chip, SectionLabel } from '@/components/UI';
 import { suggestedFarePresets } from '@/lib/routes';
 
-const ISSUE_OPTIONS = ['On time', 'Crowded', 'Late', 'Overcharged'];
+const ISSUE_OPTIONS = ['On time', 'Crowded', 'Late', 'Wrong route', 'Overcharged'];
 
 export default function FareReportScreen() {
   const colors = useColors();
@@ -32,14 +32,19 @@ export default function FareReportScreen() {
     distanceKm: string;
     fareMin: string;
     fareMax: string;
+    reportedIssues?: string;
   }>();
 
   const fareMin = Number(params.fareMin ?? 0);
   const fareMax = Number(params.fareMax ?? 0);
   const presets = suggestedFarePresets(fareMin, fareMax);
+  const preReported = useMemo(
+    () => (params.reportedIssues ? params.reportedIssues.split(',').filter(Boolean) : []),
+    [params.reportedIssues],
+  );
 
   const [fare, setFare] = useState(String(presets[Math.floor(presets.length / 2)] ?? ''));
-  const [issues, setIssues] = useState<string[]>([]);
+  const [issues, setIssues] = useState<string[]>(preReported);
   const [submitted, setSubmitted] = useState<{ points: number } | null>(null);
   const successScale = useRef(new Animated.Value(0.6)).current;
 

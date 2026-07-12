@@ -52,7 +52,7 @@ export default function ResultsScreen() {
         contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 32 }]}
         showsVerticalScrollIndicator={false}
       >
-        <SectionLabel>{options.length} routes found</SectionLabel>
+        <SectionLabel>{`${options.length} routes found`}</SectionLabel>
         {options.map((option, index) => (
           <RouteOptionCard
             key={option.id}

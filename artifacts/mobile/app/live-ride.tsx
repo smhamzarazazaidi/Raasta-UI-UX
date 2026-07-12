@@ -8,6 +8,7 @@ import { useColors } from '@/hooks/useColors';
 import colors from '@/constants/colors';
 import { useApp } from '@/context/AppContext';
 import { RouteVisual, routeTypeIcon } from '@/components/RouteVisual';
+import { RouteMap } from '@/components/RouteMap';
 import { Button } from '@/components/UI';
 
 type Phase = 'boarding' | 'riding' | 'arrived';
@@ -24,6 +25,7 @@ export default function LiveRideScreen() {
   const { activeTrip, cancelTrip } = useApp();
   const [phase, setPhase] = useState<Phase>('boarding');
   const [progress, setProgress] = useState(0);
+  const [reportedIssues, setReportedIssues] = useState<string[]>([]);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -81,6 +83,7 @@ export default function LiveRideScreen() {
         distanceKm: String(route.distanceKm),
         fareMin: String(route.fareMin),
         fareMax: String(route.fareMax),
+        reportedIssues: reportedIssues.join(','),
       },
     });
   };
@@ -93,10 +96,15 @@ export default function LiveRideScreen() {
   };
 
   const handleReportProblem = () => {
+    const logIssue = (issue: string) => {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      setReportedIssues((prev) => (prev.includes(issue) ? prev : [...prev, issue]));
+      Alert.alert('Thanks for reporting', 'This helps keep the route accurate for other riders.');
+    };
     Alert.alert('Report a problem', 'What happened on this trip?', [
-      { text: 'Bus is late', onPress: () => {} },
-      { text: 'Overcrowded', onPress: () => {} },
-      { text: 'Wrong route', onPress: () => {} },
+      { text: 'Bus is late', onPress: () => logIssue('Late') },
+      { text: 'Overcrowded', onPress: () => logIssue('Crowded') },
+      { text: 'Wrong route', onPress: () => logIssue('Wrong route') },
       { text: 'Cancel', style: 'cancel' },
     ]);
   };
@@ -167,6 +175,8 @@ export default function LiveRideScreen() {
             ) : null}
           </View>
         )}
+
+        <RouteMap path={route.path} progress={progress} accentColor={accent} stops={route.stops} />
 
         <View style={[styles.visualCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <RouteVisual stops={route.stops} progress={progress} accentColor={accent} />
