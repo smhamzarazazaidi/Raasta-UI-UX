@@ -16,6 +16,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
 import { useApp } from '@/context/AppContext';
 import { Button, Chip, SectionLabel } from '@/components/UI';
+import { TruckArtBand } from '@/components/TruckArtBand';
 import { suggestedFarePresets } from '@/lib/routes';
 
 const ISSUE_OPTIONS = ['On time', 'Crowded', 'Late', 'Wrong route', 'Overcharged'];
@@ -91,6 +92,7 @@ export default function FareReportScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <TruckArtBand height={8} />
       <View style={[styles.header, { paddingTop: insets.top + (Platform.OS === 'web' ? 24 : 16) }]}>
         <Pressable onPress={() => router.replace('/(tabs)')} hitSlop={12} style={styles.closeButton}>
           <Ionicons name="close" size={22} color={colors.foreground} />

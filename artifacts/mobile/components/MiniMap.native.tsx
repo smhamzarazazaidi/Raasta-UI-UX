@@ -9,7 +9,7 @@ interface MiniMapProps {
 
 export function MiniMap({ center, markerColor, showMarker }: MiniMapProps) {
   return (
-    <View style={[styles.container, { backgroundColor: '#1a2e1a' }]}>
+    <View style={[styles.container, { backgroundColor: '#EFDFBB' }]}>
       {showMarker && (
         <View style={[styles.marker, { backgroundColor: markerColor }]} />
       )}

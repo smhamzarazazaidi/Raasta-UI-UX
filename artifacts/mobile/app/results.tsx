@@ -8,6 +8,7 @@ import { useApp } from '@/context/AppContext';
 import { generateRouteOptions } from '@/lib/routes';
 import { RouteOptionCard } from '@/components/RouteOptionCard';
 import { SectionLabel } from '@/components/UI';
+import { TruckArtBand } from '@/components/TruckArtBand';
 
 export default function ResultsScreen() {
   const colors = useColors();
@@ -29,10 +30,11 @@ export default function ResultsScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <TruckArtBand height={8} />
       <View
         style={[
           styles.header,
-          { paddingTop: insets.top + (Platform.OS === 'web' ? 67 : 12), borderBottomColor: colors.border },
+          { paddingTop: insets.top + (Platform.OS === 'web' ? 24 : 12), borderBottomColor: colors.border },
         ]}
       >
         <Pressable onPress={() => router.back()} hitSlop={12} style={styles.backButton}>

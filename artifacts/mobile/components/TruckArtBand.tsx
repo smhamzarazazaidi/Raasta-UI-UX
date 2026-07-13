@@ -1,13 +1,14 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
+import colors from '@/constants/colors';
 
 // A decorative strip inspired by Pakistani truck-art livery: repeating
-// painted flowers and chevron pennants in the bright, hand-painted palette
-// riders recognize from real buses and trucks. Used sparingly as a border
-// accent on hero surfaces, per the brief's "cultural theme" guidance —
-// legible content stays plain, only edges/headers carry the motif.
-const MOTIF_COLORS = ['#F7A029', '#0F9D58', '#2E6FE0', '#E93F48', '#F2C230'];
+// painted flowers in the bright, hand-painted palette riders recognize from
+// real buses and trucks. Used sparingly as a border accent on hero surfaces
+// against the app's cream/brown ground — legible content stays plain, only
+// edges/headers carry the motif.
+const MOTIF_COLORS = colors.motif;
 
 function Flower({ x, color }: { x: number; color: string }) {
   return (

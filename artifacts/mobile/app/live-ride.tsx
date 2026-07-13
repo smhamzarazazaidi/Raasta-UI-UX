@@ -11,6 +11,7 @@ import { useAlert } from '@/context/AlertContext';
 import { RouteVisual, routeTypeIcon } from '@/components/RouteVisual';
 import { RouteMap } from '@/components/RouteMap';
 import { Button } from '@/components/UI';
+import { TruckArtBand } from '@/components/TruckArtBand';
 
 type Phase = 'boarding' | 'riding' | 'arrived';
 
@@ -128,10 +129,11 @@ export default function LiveRideScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <TruckArtBand height={8} />
       <View
         style={[
           styles.header,
-          { paddingTop: insets.top + (Platform.OS === 'web' ? 67 : 12), borderBottomColor: theme.border },
+          { paddingTop: insets.top + (Platform.OS === 'web' ? 24 : 12), borderBottomColor: theme.border },
         ]}
       >
         <View style={[styles.headerIcon, { backgroundColor: `${accent}1F` }]}>

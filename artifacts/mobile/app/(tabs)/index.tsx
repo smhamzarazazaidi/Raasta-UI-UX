@@ -14,8 +14,10 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { Redirect, router } from 'expo-router';
 import { FullMap } from '@/components/FullMap';
+import { TruckArtBand } from '@/components/TruckArtBand';
 
 import { useColors } from '@/hooks/useColors';
+import palette from '@/constants/colors';
 import { useApp } from '@/context/AppContext';
 import { useAlert } from '@/context/AlertContext';
 import { Button } from '@/components/UI';
@@ -122,9 +124,11 @@ export default function HomeScreen() {
 
       {/* BOTTOM SHEET SEARCH CARD */}
       <View style={[styles.bottomSheet, { paddingBottom: insets.bottom + 100, backgroundColor: colors.background }]}>
-        {/* Subtle floral border hint (5% Pakistani Identity) */}
-        <View style={[styles.traditionalBorder, { backgroundColor: colors.secondary }]} />
-        
+        {/* Truck-art painted-flower border, the app's one recurring cultural motif */}
+        <View style={styles.traditionalBorder}>
+          <TruckArtBand height={10} />
+        </View>
+
         <View style={styles.sheetHandle} />
 
         <View style={styles.sheetContent}>
@@ -158,7 +162,7 @@ export default function HomeScreen() {
 
             <Pressable style={styles.quickActionItem}>
               <View style={[styles.quickIconBox, { backgroundColor: colors.card, shadowColor: '#000' }]}>
-                <Ionicons name="people" size={24} color={colors.secondary} />
+                <Ionicons name="people" size={24} color={palette.route.express} />
               </View>
               <Text style={[styles.quickActionText, { color: colors.foreground }]}>Live Routes</Text>
             </Pressable>
@@ -238,14 +242,14 @@ const styles = StyleSheet.create({
   },
   traditionalBorder: {
     width: '100%',
-    height: 4,
+    overflow: 'hidden',
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
   },
   sheetHandle: {
     width: 40,
     height: 4,
-    backgroundColor: '#EAEAEA',
+    backgroundColor: '#E4D3AE',
     borderRadius: 2,
     alignSelf: 'center',
     marginTop: 12,

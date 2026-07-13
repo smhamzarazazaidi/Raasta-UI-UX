@@ -6,14 +6,14 @@ import { useColors } from '@/hooks/useColors';
 export function FullMap({ userCoords }: { userCoords: any }) {
   const colors = useColors();
   return (
-    <View style={[styles.container, { backgroundColor: '#0d1f0d' }]}>
+    <View style={[styles.container, { backgroundColor: '#EFDFBB' }]}>
       {/* Decorative grid lines to simulate a map */}
       <View style={styles.gridOverlay} pointerEvents="none">
         {[...Array(8)].map((_, i) => (
-          <View key={`h${i}`} style={[styles.gridLineH, { top: `${i * 14}%`, backgroundColor: 'rgba(255,255,255,0.04)' }]} />
+          <View key={`h${i}`} style={[styles.gridLineH, { top: `${i * 14}%`, backgroundColor: 'rgba(59,42,29,0.06)' }]} />
         ))}
         {[...Array(6)].map((_, i) => (
-          <View key={`v${i}`} style={[styles.gridLineV, { left: `${i * 18}%`, backgroundColor: 'rgba(255,255,255,0.04)' }]} />
+          <View key={`v${i}`} style={[styles.gridLineV, { left: `${i * 18}%`, backgroundColor: 'rgba(59,42,29,0.06)' }]} />
         ))}
       </View>
 
@@ -23,7 +23,7 @@ export function FullMap({ userCoords }: { userCoords: any }) {
         <View style={[styles.dot, { backgroundColor: colors.primary }]}>
           <Ionicons name="location" size={20} color="#fff" />
         </View>
-        <Text style={[styles.label, { color: colors.primary }]}>Lahore, Pakistan</Text>
+        <Text style={[styles.label, { color: colors.foreground }]}>Lahore, Pakistan</Text>
       </View>
     </View>
   );

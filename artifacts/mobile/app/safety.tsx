@@ -10,6 +10,7 @@ import { useApp } from '@/context/AppContext';
 import { useAlert } from '@/context/AlertContext';
 import { Button, SectionLabel } from '@/components/UI';
 import { EditableFieldModal } from '@/components/EditableFieldModal';
+import { TruckArtBand } from '@/components/TruckArtBand';
 
 export default function SafetyScreen() {
   const colors = useColors();
@@ -58,6 +59,7 @@ export default function SafetyScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <TruckArtBand height={8} />
       <View style={[styles.header, { paddingTop: insets.top + (Platform.OS === 'web' ? 24 : 16) }]}>
         <Text style={[styles.title, { color: colors.foreground }]}>Safety center</Text>
         <Pressable onPress={() => router.back()} hitSlop={12} style={styles.closeButton}>
