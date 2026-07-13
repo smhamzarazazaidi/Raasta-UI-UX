@@ -1,62 +1,55 @@
 /**
- * Semantic design tokens for Raasta — "Cultural Pakistani" theme.
- *
- * Palette is pulled straight from truck-art livery: vermillion red as the
- * hero color, marigold-orange and emerald as its supporting accents, on a
- * warm off-white ground so painted colors pop the way they do on a real
- * Lahore bus. Decorative motifs (see TruckArtBand) stay confined to
- * header/hero edges per the brief — body text and cards stay plain and
- * legible in daylight.
+ * Semantic design tokens for Raasta — "Premium Minimal" theme.
  */
 
 const colors = {
   light: {
-    // Legacy aliases (kept for backward compatibility)
-    text: '#20140A',
-    tint: '#E93F48',
+    // Legacy aliases
+    text: '#2A2A2A',
+    tint: '#0B4A3B',
 
     // Core surfaces
-    background: '#FCF8F1',
-    foreground: '#20140A',
+    background: '#FFFFFF', // Soft White
+    foreground: '#2A2A2A',
 
     // Cards / elevated surfaces
     card: '#FFFFFF',
-    cardForeground: '#20140A',
+    cardForeground: '#2A2A2A',
 
-    // Primary action color — truck-art vermillion red
-    primary: '#E93F48',
+    // Primary action color — Deep Emerald Green
+    primary: '#0B4A3B',
     primaryForeground: '#FFFFFF',
 
-    // Secondary / less-emphasis interactive surfaces — marigold tint
-    secondary: '#FDECC8',
-    secondaryForeground: '#8A4B00',
+    // Secondary / less-emphasis interactive surfaces — Teal
+    secondary: '#1A7A6E',
+    secondaryForeground: '#FFFFFF',
 
     // Muted / subdued elements (dividers, timestamps, placeholders)
-    muted: '#F2E9DA',
-    mutedForeground: '#7C6F5E',
+    muted: '#F5F5F5',
+    mutedForeground: '#7C8A85',
 
-    // Accent highlights (badges, selected items, focus rings) — marigold orange
-    accent: '#F7A029',
-    accentForeground: '#3A2400',
+    // Accent highlights — Warm Orange
+    accent: '#E66A20',
+    accentForeground: '#FFFFFF',
 
-    // Destructive / urgent actions (end trip, SOS) — deep crimson
-    destructive: '#C62828',
+    // Destructive / urgent actions
+    destructive: '#D32F2F',
     destructiveForeground: '#FFFFFF',
 
     // Borders and input outlines
-    border: '#EFE1C8',
-    input: '#EFE1C8',
+    border: '#EAEAEA',
+    input: '#EAEAEA',
   },
 
-  // Route-type accent colors, echoing the brief's Saver/Express/Comfort cues
+  // Route-type accent colors
   route: {
-    saver: '#0F9D58',
-    express: '#2E6FE0',
-    comfort: '#F7A029',
+    saver: '#1A7A6E', // Teal
+    express: '#0B4A3B', // Emerald
+    comfort: '#E66A20', // Orange
   },
 
-  // Border radius (in px) — soft, warm, pill-leaning
-  radius: 18,
+  // Border radius (in px) — rounded, modern cards (inDrive style)
+  radius: 24,
 };
 
 export default colors;

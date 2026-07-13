@@ -1,44 +1,41 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
+  Dimensions,
+  Animated,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { Redirect, router } from 'expo-router';
+import { FullMap } from '@/components/FullMap';
+
 import { useColors } from '@/hooks/useColors';
 import { useApp } from '@/context/AppContext';
 import { useAlert } from '@/context/AlertContext';
-import { Button, Chip, SectionLabel } from '@/components/UI';
-import { EditableFieldModal } from '@/components/EditableFieldModal';
-import { MiniMap } from '@/components/MiniMap';
+import { Button } from '@/components/UI';
 
+const { width, height } = Dimensions.get('window');
 const LAHORE_CENTER = { latitude: 31.5204, longitude: 74.3587 };
 
 export default function HomeScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const alert = useAlert();
-  const {
-    isLoading,
-    onboarded,
-    savedPlaces,
-    recentSearches,
-    addRecentSearch,
-    setSavedPlace,
-  } = useApp();
+  const { isLoading, onboarded } = useApp();
 
   const [from, setFrom] = useState('Your location');
   const [to, setTo] = useState('');
   const [locating, setLocating] = useState(true);
   const [userCoords, setUserCoords] = useState<{ latitude: number; longitude: number } | null>(null);
-  const [editingPlace, setEditingPlace] = useState<'home' | 'work' | null>(null);
+
+  // Animated values for smooth sheet expansion (to be fully implemented later)
+  const sheetAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     (async () => {
@@ -66,7 +63,7 @@ export default function HomeScreen() {
           if (label) setFrom(label);
         }
       } catch {
-        // Keep the "Your location" fallback if geocoding is unavailable.
+        // Keep fallback
       } finally {
         setLocating(false);
       }
@@ -79,156 +76,231 @@ export default function HomeScreen() {
 
   const handleSearch = () => {
     if (!to.trim()) return;
-    addRecentSearch(to);
     router.push({ pathname: '/results', params: { from, to } });
-  };
-
-  const handleQuickFill = (key: 'home' | 'work') => {
-    const value = savedPlaces[key];
-    if (!value) {
-      setEditingPlace(key);
-      return;
-    }
-    setTo(value);
   };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScrollView
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingTop: insets.top + (Platform.OS === 'web' ? 67 : 16), paddingBottom: insets.bottom + 32 },
-        ]}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.headerRow}>
-          <View>
-            <Text style={[styles.greeting, { color: colors.mutedForeground }]}>Good to see you</Text>
-            <Text style={[styles.wordmark, { color: colors.foreground }]}>Raasta</Text>
-          </View>
-          <Pressable
-            onPress={() => alert('No new alerts', 'Route and fare updates will appear here.')}
-            style={[styles.bellButton, { backgroundColor: colors.secondary }]}
-          >
-            <Ionicons name="notifications-outline" size={19} color={colors.secondaryForeground} />
-          </Pressable>
-        </View>
+      {/* FULL SCREEN MAP (inDrive style) */}
+      <FullMap userCoords={userCoords} />
 
-        <View style={[styles.searchCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <View style={styles.searchRow}>
-            <View style={[styles.dotIcon, { backgroundColor: colors.primary }]} />
-            <TextInput
-              value={from}
-              onChangeText={setFrom}
-              placeholder="Your location"
-              placeholderTextColor={colors.mutedForeground}
-              style={[styles.searchInput, { color: colors.foreground }]}
-            />
-            {locating ? <Ionicons name="locate" size={16} color={colors.mutedForeground} /> : null}
-          </View>
-          <View style={[styles.searchDivider, { backgroundColor: colors.border }]} />
-          <View style={styles.searchRow}>
-            <Ionicons name="location" size={16} color={colors.destructive} style={styles.pinIcon} />
+      {/* FLOATING TOP NAVIGATION */}
+      <View style={[styles.topNav, { paddingTop: insets.top + 16 }]}>
+        <Pressable
+          style={[styles.menuButton, { backgroundColor: colors.card, shadowColor: '#000' }]}
+          onPress={() => alert('Menu', 'Drawer menu coming soon!')}
+        >
+          <Ionicons name="menu" size={24} color={colors.foreground} />
+        </Pressable>
+
+        <Pressable
+          style={[styles.notificationBadge, { backgroundColor: colors.accent }]}
+          onPress={() => alert('Notifications', 'No new community updates.')}
+        >
+          <Text style={{ color: colors.accentForeground, fontSize: 10, fontWeight: 'bold' }}>2</Text>
+        </Pressable>
+      </View>
+
+      {/* FLOATING ACTION BUTTONS (Right Side) */}
+      <View style={styles.fabContainer}>
+        <Pressable
+          style={[styles.fab, { backgroundColor: colors.card, shadowColor: '#000' }]}
+          onPress={() => alert('Layers', 'Transit Map Layers coming soon.')}
+        >
+          <Ionicons name="layers" size={20} color={colors.foreground} />
+        </Pressable>
+        
+        <Pressable
+          style={[styles.fab, { backgroundColor: colors.card, shadowColor: '#000', marginTop: 12 }]}
+          onPress={() => {
+            // Locate user logic
+          }}
+        >
+          <Ionicons name="locate" size={20} color={colors.foreground} />
+        </Pressable>
+      </View>
+
+      {/* BOTTOM SHEET SEARCH CARD */}
+      <View style={[styles.bottomSheet, { paddingBottom: insets.bottom + 100, backgroundColor: colors.background }]}>
+        {/* Subtle floral border hint (5% Pakistani Identity) */}
+        <View style={[styles.traditionalBorder, { backgroundColor: colors.secondary }]} />
+        
+        <View style={styles.sheetHandle} />
+
+        <View style={styles.sheetContent}>
+          <Text style={[styles.sheetTitle, { color: colors.foreground }]}>Community Mode Active</Text>
+          <Text style={[styles.sheetSubtitle, { color: colors.mutedForeground }]}>We track people, not buses.</Text>
+
+          <View style={[styles.searchBox, { backgroundColor: colors.muted }]}>
+            <Ionicons name="search" size={20} color={colors.mutedForeground} style={styles.searchIcon} />
             <TextInput
               value={to}
               onChangeText={setTo}
-              placeholder="Where are you going? e.g. Dolmen Mall"
+              placeholder="Search destination..."
               placeholderTextColor={colors.mutedForeground}
               style={[styles.searchInput, { color: colors.foreground }]}
               returnKeyType="search"
               onSubmitEditing={handleSearch}
             />
+            <Pressable onPress={() => alert('Voice Search', 'Speak destination')}>
+              <Ionicons name="mic" size={20} color={colors.mutedForeground} />
+            </Pressable>
           </View>
-          <View style={styles.searchButton}>
-            <Button label="Find routes" onPress={handleSearch} disabled={!to.trim()} icon="search" />
+
+          {/* Quick Actions */}
+          <View style={styles.quickActions}>
+            <Pressable style={styles.quickActionItem}>
+              <View style={[styles.quickIconBox, { backgroundColor: colors.card, shadowColor: '#000' }]}>
+                <Ionicons name="bus" size={24} color={colors.primary} />
+              </View>
+              <Text style={[styles.quickActionText, { color: colors.foreground }]}>Nearby Stops</Text>
+            </Pressable>
+
+            <Pressable style={styles.quickActionItem}>
+              <View style={[styles.quickIconBox, { backgroundColor: colors.card, shadowColor: '#000' }]}>
+                <Ionicons name="people" size={24} color={colors.secondary} />
+              </View>
+              <Text style={[styles.quickActionText, { color: colors.foreground }]}>Live Routes</Text>
+            </Pressable>
+
+            <Pressable style={styles.quickActionItem}>
+              <View style={[styles.quickIconBox, { backgroundColor: colors.card, shadowColor: '#000' }]}>
+                <Ionicons name="bookmark" size={24} color={colors.accent} />
+              </View>
+              <Text style={[styles.quickActionText, { color: colors.foreground }]}>Saved</Text>
+            </Pressable>
           </View>
+
         </View>
-
-        <View style={styles.chipsRow}>
-          <Chip icon="home-outline" label={savedPlaces.home ? 'Home' : 'Set home'} onPress={() => handleQuickFill('home')} />
-          <Chip icon="briefcase-outline" label={savedPlaces.work ? 'Work' : 'Set work'} onPress={() => handleQuickFill('work')} />
-        </View>
-
-        {recentSearches.length > 0 ? (
-          <View style={styles.section}>
-            <SectionLabel>Recent searches</SectionLabel>
-            <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
-              {recentSearches.map((query, index) => (
-                <Pressable
-                  key={query}
-                  onPress={() => {
-                    setTo(query);
-                    router.push({ pathname: '/results', params: { from, to: query } });
-                  }}
-                  style={[
-                    styles.recentRow,
-                    index < recentSearches.length - 1 ? { borderBottomWidth: 1, borderBottomColor: colors.border } : null,
-                  ]}
-                >
-                  <Ionicons name="time-outline" size={16} color={colors.mutedForeground} />
-                  <Text style={[styles.recentText, { color: colors.foreground }]} numberOfLines={1}>
-                    {query}
-                  </Text>
-                  <Ionicons name="chevron-forward" size={15} color={colors.mutedForeground} />
-                </Pressable>
-              ))}
-            </View>
-          </View>
-        ) : null}
-
-        <View style={styles.section}>
-          <SectionLabel>Nearby</SectionLabel>
-          <View style={[styles.mapCard, { borderColor: colors.border }]}>
-            <MiniMap
-              center={userCoords ?? LAHORE_CENTER}
-              markerColor={colors.primary}
-              showMarker={!!userCoords}
-            />
-          </View>
-          <Text style={[styles.teaserText, { color: colors.mutedForeground }]}>
-            Every trip reported on Raasta makes routes, fares and arrival times more accurate for the
-            next rider.
-          </Text>
-        </View>
-      </ScrollView>
-
-      <EditableFieldModal
-        visible={editingPlace !== null}
-        title={editingPlace === 'home' ? 'Set home address' : 'Set work address'}
-        placeholder="e.g. Model Town, Lahore"
-        initialValue=""
-        onClose={() => setEditingPlace(null)}
-        onSave={(value) => {
-          if (editingPlace && value) {
-            setSavedPlace(editingPlace, value);
-            setTo(value);
-          }
-        }}
-      />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scrollContent: { paddingHorizontal: 20, gap: 20 },
-  headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  greeting: { fontSize: 13, fontFamily: 'Inter_400Regular' },
-  wordmark: { fontSize: 26, fontFamily: 'Inter_700Bold', marginTop: 2 },
-  bellButton: { width: 40, height: 40, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  searchCard: { borderRadius: 22, borderWidth: 1, padding: 16, gap: 4 },
-  searchRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10 },
-  dotIcon: { width: 10, height: 10, borderRadius: 5, marginLeft: 3, marginRight: 3 },
-  pinIcon: { marginLeft: 1 },
-  searchInput: { flex: 1, fontSize: 15, fontFamily: 'Inter_500Medium' },
-  searchDivider: { height: 1, marginLeft: 25 },
-  searchButton: { marginTop: 10 },
-  chipsRow: { flexDirection: 'row', gap: 10 },
-  section: { gap: 4 },
-  card: { borderRadius: 18, borderWidth: 1, overflow: 'hidden' },
-  recentRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 13, paddingHorizontal: 16 },
-  recentText: { flex: 1, fontSize: 14, fontFamily: 'Inter_500Medium' },
-  mapCard: { height: 160, borderRadius: 20, borderWidth: 1, overflow: 'hidden' },
-  teaserText: { fontSize: 12.5, fontFamily: 'Inter_400Regular', lineHeight: 18, marginTop: 10 },
+  topNav: {
+    position: 'absolute',
+    top: 0,
+    left: 20,
+    flexDirection: 'row',
+  },
+  menuButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+  },
+  notificationBadge: {
+    position: 'absolute',
+    top: 14,
+    right: -4,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FFF',
+  },
+  fabContainer: {
+    position: 'absolute',
+    right: 20,
+    bottom: 300,
+  },
+  fab: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+  },
+  bottomSheet: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+  },
+  traditionalBorder: {
+    width: '100%',
+    height: 4,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+  },
+  sheetHandle: {
+    width: 40,
+    height: 4,
+    backgroundColor: '#EAEAEA',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginTop: 12,
+  },
+  sheetContent: {
+    paddingHorizontal: 24,
+    paddingTop: 16,
+  },
+  sheetTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter_700Bold',
+  },
+  sheetSubtitle: {
+    fontSize: 13,
+    fontFamily: 'Inter_400Regular',
+    marginTop: 2,
+    marginBottom: 20,
+  },
+  searchBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 56,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+  },
+  searchIcon: {
+    marginRight: 12,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    fontFamily: 'Inter_500Medium',
+  },
+  quickActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 24,
+  },
+  quickActionItem: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  quickIconBox: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+  },
+  quickActionText: {
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
+  },
 });
